@@ -74,14 +74,14 @@ void loop() {
   for (int i = 0; i < samples; i++) {
     int32_t sample = audioBuffer32[i];
 
-
+    // DC offset
     sample &= 0xFFFFFFF0;
-
+    
     // conversion 32 → 16 bit
     sample >>= 15;
 
     // gain
-    sample *= 1.5;
+    sample *= 3;
 
     // clamp
     if (sample > 32767) sample = 32767;
@@ -89,7 +89,6 @@ void loop() {
 
     audioBuffer16[i] = (int16_t)sample;
   }
-
 
   int32_t rms = 0;
   for (int i = 0; i < samples; i++) {
@@ -103,10 +102,6 @@ void loop() {
     udp.write((uint8_t*)audioBuffer16, samples * sizeof(int16_t));
     udp.endPacket();
 }
-
-  // udp.beginPacket(udpAddress, udpPort);
-  // udp.write((uint8_t*)audioBuffer16, samples * sizeof(int16_t));
-  // udp.endPacket();
 
 
   int packetSize = udp.parsePacket();
